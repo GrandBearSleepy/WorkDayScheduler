@@ -1,67 +1,71 @@
-// var starHour = moment().set('hour', 9);
-// var endHour = moment().set('hour', 17);
-// var currentHour = moment().get('hour');
 
+$(document).ready(function () {
 
-var eventsArray = JSON.parse(localStorage.getItem("events")) || [];
-var hoursNum = 9;
+    //read local storage if nothing make new storage array
+    var eventsArray = JSON.parse(localStorage.getItem("events")) || [];
+    //daily total hours
+    var hoursNum = 9;
 
-renderScheduler()
+    //render page
+    renderScheduler()
 
-function getCurrentDay() {
-    var currenDay = moment().format('YYYY-MM-DD')
-    return currenDay;
-}
+    //set hourly color
+    hourlyColor();
 
-function renderScheduler() {
+    //use moment.js to get current day
+    function getCurrentDay() {
 
-    $("#currentDay").text(getCurrentDay());
-    $.each($(".event-content"), function (e) {
-        var textareaId = parseInt($(this).attr("id"));
-        for (var i = 0; i < eventsArray.length; i++) {
-            var getHour = eventsArray[i].hour;
-            if (textareaId === getHour) {
-                $(this).text(eventsArray[i].content);
+        var currenDay = moment().format('YYYY-MM-DD')
+        return currenDay;
+    }
+
+    //render function to display current day and hourly content
+    function renderScheduler() {
+
+        $("#currentDay").text(getCurrentDay());
+        $.each($(".event-content"), function (e) {
+            var textareaId = parseInt($(this).attr("id"));
+            for (var i = 0; i < eventsArray.length; i++) {
+                var getHour = eventsArray[i].hour;
+                if (textareaId === getHour) {
+                    $(this).text(eventsArray[i].content);
+                }
             }
-        }
-    })
-}
-
-function hourlyColor() {
-    var currentHour = moment().hour();
-    console.log(currentHour);
-    for (var i = 1; i <= hoursNum; i++) {
-        var comparedHour = parseInt($("#" + i).data("hour"));
-        if (currentHour === comparedHour) {
-            $("#" + i).addClass("present");
-        }
-        else if (currentHour > comparedHour) {
-            $("#" + i).attr("disabled", "disabled");
-            $("#" + i).addClass("past");
-        }
-        else $("#" + i).addClass("future");
-
-    }
-}
-
-$(".saveBtn").on("click", function (event) {
-    event.preventDefault();
-    var eventHour = $(this).data("id");
-    var eventContent = $(this).parent().siblings().children().val();
-
-    var hourlyEvent = {
-        "day": getCurrentDay(),
-        "hour": eventHour,
-        "content": eventContent
+        })
     }
 
-    if (eventContent !== "") {
-        eventsArray.push(hourlyEvent);
-        localStorage.setItem("events", JSON.stringify(eventsArray));
-        alert("You have saved an event!")
+    //to set up each hour's color
+    function hourlyColor() {
+
+        var currentHour = moment().hour();
+        console.log(currentHour);
+        for (var i = 1; i <= hoursNum; i++) {
+            var comparedHour = parseInt($("#" + i).data("hour"));
+            if (currentHour === comparedHour) {
+                $("#" + i).addClass("present");
+            }
+            else if (currentHour > comparedHour) {
+                $("#" + i).attr("disabled", "disabled");
+                $("#" + i).addClass("past");
+            }
+            else $("#" + i).addClass("future");
+        }
     }
-});
 
-hourlyColor();
-
-
+    //save button event listener to save user's input as local storage
+    $(".saveBtn").on("click", function (event) {
+        event.preventDefault();
+        var eventHour = $(this).data("id");
+        var eventContent = $(this).parent().siblings().children().val();
+        var hourlyEvent = {
+            "day": getCurrentDay(),
+            "hour": eventHour,
+            "content": eventContent
+        }
+        if (eventContent !== "") {
+            eventsArray.push(hourlyEvent);
+            localStorage.setItem("events", JSON.stringify(eventsArray));
+            alert("You have saved an event!")
+        }
+    });
+})
