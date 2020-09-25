@@ -45,7 +45,7 @@ $(document).ready(function () {
                 $("#" + i).addClass("present");
             }
             else if (currentHour > comparedHour) {
-                //diable past hour text area
+                //disable past hour text area
                 $("#" + i).attr("disabled", "disabled");
                 $("#" + i).addClass("past");
             }
